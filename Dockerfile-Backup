@@ -1,0 +1,22 @@
+#FROM alpine:3.14
+FROM ubuntu:23.04 as base
+#FROM python:3.9-slim-bullseye
+Add LLM_Interface.py .
+Copy ./models /models
+#Run python3 -m pip install --upgrade pip
+
+#RUN add-apt-repository ppa:ubuntu-toolchain-r/test
+#RUN apt update
+RUN apt-get update && apt-get install -y \
+	python3.10 \
+    python3-pip \
+    gcc-11
+#RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 60 --slave /usr/bin/g++ g++ /usr/bin/g++-11
+#RUN python3 -m pip install --upgrade pip
+#RUN pip install --upgrade setuptools wheel
+#RUN sudo apt-get install build-essential
+
+RUN python3 -m pip install llama-cpp-python --break-system-packages
+EXPOSE 8080
+#CMD ["python", "./LLM_Interface.py"]
+CMD python3 LLM_Interface.py
