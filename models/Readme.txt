@@ -1,1 +1,1 @@
-Model will be stored here.  This is currently coded for the synthia-7b-v2.0.Q4_K_M.gguf model
+Model will be stored here.  This is currently coded for the synthia-7b-v2.0.Q4_K_M.gguf model.  The model can be downloaded here: https://huggingface.co/TheBloke/SynthIA-7B-v2.0-GGUF/blob/main/synthia-7b-v2.0.Q4_0.gguf
