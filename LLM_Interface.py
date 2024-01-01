@@ -1,13 +1,27 @@
 from llama_cpp import Llama
+from flask import Flask, redirect, url_for, request
 import copy
 import json
 import sys
+import os
+
+
+
+def run_model(query):
+    output = llm(
+         query,
+         suffix="▌",
+         max_tokens=131072,
+         temperature=0.8,
+         echo=False,
+         stream=False,
+         stop="▌"
+         )
+
+    return output['choices'][0]['text']
 
 
 print("Loading model...")
-#llm = Llama(model_path="/mnt/d/Workspaces/Git Local Repo/LLM Python Interface/models/synthia-7b-v2.0.Q4_K_M.gguf", 
-#            verbose=True, n_gpu_layers=32, n_threads=6, n_ctx=512, n_batch=1024)
-
 
 model = "synthia-7b-v2.0.Q4_K_M.gguf"
 
@@ -21,45 +35,22 @@ else:
 print("Model loaded")
 
 
+app = Flask(__name__)
 
-running=True
+@app.route('/success/<response>')
+def success(response):
+    return response
 
-while(running):
-    #print("Q: ", end="")
-    
-    userQuestion = input("Q: ")
-    #print("Q: " + userQuestion)
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    print("Message received!!")
 
-    if userQuestion.upper() == "EXIT":
-        running = False
-    
-    
-    if running:
-        output = llm(
-        "Q: " + userQuestion + '▌',
-        max_tokens=131072,
-        temperature=0.8,
-        echo=False,
-        stream=True,
-        stop='▌'
-        )
+    query = request.form['qr']
+    result = run_model(str(query))
+    htmlData = open("index.html", "r")
+    result += htmlData.read()
+    return result
 
-        
-        #print(output['choices'])
-        print("==============================")
-        for line in output:
-            print(line['choices'][0]['text'], end="")
-            #print(line)
-        print("\n==============================")
-
-        llm.reset()
-    
-    else:
-        print("Exiting...")
-
-
-
-
-# for line in output:
-#     CompletionFragment = copy.deepcopy(line)
-#     print(CompletionFragment['choices'])
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 8080))
+    app.run(debug=True, host='0.0.0.0', port=port)
